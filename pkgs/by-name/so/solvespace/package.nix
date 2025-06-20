@@ -28,6 +28,7 @@
   util-linuxMinimal, # provides libmount
   xorg,
   zlib,
+  llvmPackages,
 }:
 
 stdenv.mkDerivation rec {
@@ -62,8 +63,6 @@ stdenv.mkDerivation rec {
     libepoxy
     libGLU
     libpng
-    libselinux
-    libsepol
     libspnav
     libthai
     libxkbcommon
@@ -74,6 +73,10 @@ stdenv.mkDerivation rec {
     xorg.libXdmcp
     xorg.libXtst
     zlib
+  ] ++ lib.optionals stdenv.isLinux [
+    libselinux
+    libsepol
+    llvmPackages.openmp
   ];
 
   postPatch = ''
@@ -90,13 +93,13 @@ stdenv.mkDerivation rec {
     EOF
   '';
 
-  cmakeFlags = [ "-DENABLE_OPENMP=ON" ];
+  cmakeFlags = if stdenv.isLinux then [ "-DENABLE_OPENMP=ON" ] else [ "-DENABLE_OPENMP=OFF" ];
 
   meta = {
     description = "Parametric 3d CAD program";
     license = lib.licenses.gpl3Plus;
     maintainers = [ lib.maintainers.edef ];
-    platforms = lib.platforms.linux;
+    platforms = lib.platforms.all;
     homepage = "https://solvespace.com";
     changelog = "https://github.com/solvespace/solvespace/raw/v${version}/CHANGELOG.md";
   };
