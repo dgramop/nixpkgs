@@ -29,6 +29,7 @@
   xorg,
   zlib,
   llvmPackages,
+  pixman,
 }:
 
 stdenv.mkDerivation rec {
@@ -40,7 +41,14 @@ stdenv.mkDerivation rec {
     repo = "solvespace";
     rev = "v${version}";
     hash = "sha256-sSDht8pBrOG1YpsWfC/CLTTWh2cI5pn2PXGH900Z0yA=";
-    fetchSubmodules = true;
+    fetchSubmodules = false;
+  };
+
+  drxfw = fetchFromGitHub {
+    owner = "codelibs";
+    repo = "libdxfrw";
+    rev = "0bde85180a9a5a76ced21bf1db641c2dec6923aa";
+    hash = "sha256-Ea/SoTXuHcaSDQPfxmQxaFyiHjRs0EJZF62Mj9GLXuo=";
   };
 
   nativeBuildInputs = [
@@ -68,11 +76,13 @@ stdenv.mkDerivation rec {
     libxkbcommon
     pangomm
     pcre
+    pixman
     util-linuxMinimal
     xorg.libpthreadstubs
     xorg.libXdmcp
     xorg.libXtst
     zlib
+    drxfw
   ] ++ lib.optionals stdenv.isLinux [
     libselinux
     libsepol
